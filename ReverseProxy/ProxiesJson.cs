@@ -46,6 +46,30 @@ namespace ReverseProxy
                     });
                 }
 
+                if (proxy.RequestOverrides != null)
+                {
+                    foreach (var header in proxy.RequestOverrides.Headers)
+                    {
+                        transforms.Add(new Dictionary<string, string>
+                        {
+                            { "RequestHeader", header.Key },
+                            { "Append", header.Value }
+                        });
+                    }
+                }
+
+                if (proxy.ResponseOverrides != null)
+                {
+                    foreach (var header in proxy.ResponseOverrides.Headers)
+                    {
+                        transforms.Add(new Dictionary<string, string>
+                        {
+                            { "ResponseHeader", header.Key },
+                            { "Append", header.Value }
+                        });
+                    }
+                }
+
                 var route = new RouteConfig
                 {
                     RouteId = $"Route_{proxy.Name}",
