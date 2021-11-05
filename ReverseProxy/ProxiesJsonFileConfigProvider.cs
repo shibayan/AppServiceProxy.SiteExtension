@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿using Microsoft.Extensions.FileProviders.Physical;
+using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
 
 namespace ReverseProxy
 {
-    public class ProxiesJsonFileConfigProvider : IProxyConfigProvider
+    internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
     {
         public ProxiesJsonFileConfigProvider()
         {
@@ -25,6 +26,13 @@ namespace ReverseProxy
             public ProxiesJsonFileConfig(string proxiesJsonFile)
             {
                 var json = File.ReadAllText(proxiesJsonFile);
+
+                var proxies = ProxiesJson.ParseJson(json);
+                var (routes, clusters) = ProxiesJson.Transform(proxies);
+
+                Routes = routes;
+                Clusters = clusters;
+                ChangeToken = new PollingFileChangeToken(new FileInfo(proxiesJsonFile));
             }
 
             public IReadOnlyList<RouteConfig> Routes { get; }
