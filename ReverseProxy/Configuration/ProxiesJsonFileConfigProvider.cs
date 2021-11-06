@@ -3,7 +3,7 @@ using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
 
-namespace ReverseProxy
+namespace ReverseProxy.Configuration
 {
     internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
     {
@@ -27,8 +27,8 @@ namespace ReverseProxy
             {
                 var json = File.ReadAllText(proxiesJsonFile);
 
-                var proxies = ProxiesJson.ParseJson(json);
-                var (routes, clusters) = ProxiesJson.Transform(proxies);
+                var proxies = ProxiesJsonReader.ParseJson(json);
+                var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
                 Routes = routes;
                 Clusters = clusters;
