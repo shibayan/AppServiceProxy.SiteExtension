@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ReverseProxy.SiteExtension</id>
+    <title>App Service Reverse Proxy Site Extension</title>
+    <version>1.0.0</version>
+    <authors>shibayan</authors>
+    <license type="expression">MIT</license>
+    <repository type="git" url="https://github.com/shibayan/ReverseProxy.SiteExtension" />
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Reverse Proxy for Azure App Service</description>
+    <tags>AzureSiteExtension</tags>
+    <packageTypes>
+      <packageType name="AzureSiteExtension" />
+    </packageTypes>
+  </metadata>
+  <files>
+    <file src="**\*.*" target="content" />
+  </files>
+</package>

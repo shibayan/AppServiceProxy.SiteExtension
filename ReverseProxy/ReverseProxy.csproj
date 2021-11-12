@@ -10,4 +10,10 @@
     <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="applicationHost.xdt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
