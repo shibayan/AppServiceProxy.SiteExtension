@@ -146,7 +146,7 @@ namespace ReverseProxy.Tests
             Assert.Equal("text/plain", routes[0].Transforms[1]["Append"]);
         }
 
-        [Fact(Skip = "Need fix")]
+        [Fact]
         public void CatchAll()
         {
             var json = @"
