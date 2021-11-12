@@ -1,4 +1,6 @@
-﻿using Yarp.ReverseProxy.Configuration;
+﻿using System.Text.RegularExpressions;
+
+using Yarp.ReverseProxy.Configuration;
 
 using static ReverseProxy.Configuration.ProxiesJson;
 
@@ -6,6 +8,8 @@ namespace ReverseProxy.Configuration
 {
     internal static class ProxiesJsonTransform
     {
+        private static readonly Regex _templateRegex = new(@"\{([^\{\}]+)\}", RegexOptions.Compiled);
+
         public static (IReadOnlyList<RouteConfig>, IReadOnlyList<ClusterConfig>) Apply(IReadOnlyList<ProxyConfig> proxies)
         {
             var routes = new List<RouteConfig>();
@@ -13,7 +17,7 @@ namespace ReverseProxy.Configuration
 
             foreach (var proxy in proxies.Where(x => !x.Disabled))
             {
-                var backendUri = ExpandValue(proxy.BackendUri);
+                var (route, backendUri) = TransformRouteParameters(proxy.MatchCondition.Route, ExpandValue(proxy.BackendUri));
 
                 var (destinationAddress, absolutePath) = SplitBackendUri(backendUri);
 
@@ -51,19 +55,19 @@ namespace ReverseProxy.Configuration
                     }
                 }
 
-                var route = new RouteConfig
+                var routeConfig = new RouteConfig
                 {
                     RouteId = $"Route_{proxy.Name}",
                     ClusterId = $"Cluster_{proxy.Name}",
                     Match = new RouteMatch
                     {
                         Methods = proxy.MatchCondition.Methods,
-                        Path = proxy.MatchCondition.Route
+                        Path = route
                     },
                     Transforms = transforms
                 };
 
-                var cluster = new ClusterConfig
+                var clusterConfig = new ClusterConfig
                 {
                     ClusterId = $"Cluster_{proxy.Name}",
                     Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
@@ -72,14 +76,46 @@ namespace ReverseProxy.Configuration
                     }
                 };
 
-                routes.Add(route);
-                clusters.Add(cluster);
+                routes.Add(routeConfig);
+                clusters.Add(clusterConfig);
             }
 
             return (routes, clusters);
         }
 
         private static string ExpandValue(string value) => Environment.ExpandEnvironmentVariables(value);
+
+        private static (string, string) TransformRouteParameters(string route, string backendUri)
+        {
+            var catchAllParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            var transformedRoute = _templateRegex.Replace(route, m =>
+            {
+                var parameterName = m.Groups[1].Value;
+
+                // Catch all
+                if (parameterName.StartsWith("*"))
+                {
+                    parameterName = parameterName[1..];
+
+                    catchAllParameters.Add(parameterName);
+
+                    return $"{{**{parameterName}}}";
+                }
+
+                return $"{{{parameterName}}}";
+            });
+
+            var transformedBackendUri = _templateRegex.Replace(backendUri, m =>
+            {
+                var parameterName = m.Groups[1].Value;
+
+                // Catch all
+                return catchAllParameters.Contains(parameterName) ? $"{{**{parameterName}}}" : $"{{{parameterName}}}";
+            });
+
+            return (transformedRoute, transformedBackendUri);
+        }
 
         private static (string, string?) SplitBackendUri(string backendUri)
         {
