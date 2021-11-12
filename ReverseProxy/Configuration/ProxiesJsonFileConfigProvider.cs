@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.FileProviders.Physical;
+﻿using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
@@ -9,21 +9,31 @@ namespace ReverseProxy.Configuration
     {
         public ProxiesJsonFileConfigProvider()
         {
-            var wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
-            var proxiesJsonFile = Path.Combine(wwwroot, ProxiesJsonFileName);
-
-            _config = new ProxiesJsonFileConfig(proxiesJsonFile);
+            _fileProvider = new PhysicalFileProvider(_wwwroot)
+            {
+                UseActivePolling = true,
+                UsePollingFileWatcher = true
+            };
         }
+
+        private readonly PhysicalFileProvider _fileProvider;
 
         private const string ProxiesJsonFileName = "proxies.json";
 
-        private readonly ProxiesJsonFileConfig _config;
+        private static readonly string _wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
 
-        public IProxyConfig GetConfig() => _config;
+        public IProxyConfig GetConfig()
+        {
+            var proxiesJsonFile = Path.Combine(_wwwroot, ProxiesJsonFileName);
+
+            var changeToken = _fileProvider.Watch(ProxiesJsonFileName);
+
+            return new ProxiesJsonFileConfig(proxiesJsonFile, changeToken);
+        }
 
         private class ProxiesJsonFileConfig : IProxyConfig
         {
-            public ProxiesJsonFileConfig(string proxiesJsonFile)
+            public ProxiesJsonFileConfig(string proxiesJsonFile, IChangeToken changeToken)
             {
                 var json = File.ReadAllText(proxiesJsonFile);
 
@@ -32,7 +42,7 @@ namespace ReverseProxy.Configuration
 
                 Routes = routes;
                 Clusters = clusters;
-                ChangeToken = new PollingFileChangeToken(new FileInfo(proxiesJsonFile));
+                ChangeToken = changeToken;
             }
 
             public IReadOnlyList<RouteConfig> Routes { get; }
