@@ -28,6 +28,8 @@ You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` f
 
 ### Azure Portal
 
+![site extensions](https://user-images.githubusercontent.com/1356444/141622631-7d5c71c8-da20-4353-a898-141fdda73814.png)
+
 - [Tip 21 - Adding Extensions to Web Apps in Azure App Service | Azure Tips and Tricks](https://microsoft.github.io/AzureTipsAndTricks/blog/tip21.html)
 
 ### ARM Template
