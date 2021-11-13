@@ -7,14 +7,22 @@
 
 Site Extension-based Reverse Proxy compatible with Azure Functions Proxies
 
+## Motivation
+
+With the permanent removal of Azure Functions Proxies from Azure Functions v4, there is no longer a readily available and inexpensive L7 reverse proxy in Azure.
+
+This project provides an alternative implementation of a VNET-integrated gateway built using Azure Functions Proxies, and secure proxies authenticated in combination with App Service Authentication.
+
 ## Features
 
-- .NET 6.0 and YARP-based reverse proxies
+- .NET 6.0 and YARP-based reverse proxy
 - Compatibility with Azure Functions Proxies (`proxies.json`)
-- Easy to setup
+- Easy to setup with Azure Portal or ARM Template
 - Support for Git integration and CI pipelines
 
 ## Installation
+
+Since this application is based on .NET 6.0 and Site Extension, it requires a App Service (Windows) with .NET 6.0 enabled.
 
 You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` for installation.
 
