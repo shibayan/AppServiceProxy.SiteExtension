@@ -15,12 +15,23 @@ This project provides an alternative implementation of a VNET-integrated gateway
 
 ## Features
 
-- .NET 6.0 and YARP-based reverse proxy
+- All features of the App Service is available
+  - App Service Authentication
+  - Custom Domain
+  - SSL / TLS (Managed Certificate / Key Vault Certificate)
+  - VNET Integration
+- .NET 6.0 and YARP-based high-performance reverse proxy
 - Compatibility with Azure Functions Proxies (`proxies.json`)
 - Easy to setup with Azure Portal or ARM Template
 - Support for Git integration and CI pipelines
 
-## Installation
+## Quick Start
+
+| Azure (Public) | Azure China | Azure Government |
+| :---: | :---: | :---: |
+| <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshibayan%2FAppServiceProxy.SiteExtension%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a> | <a href="https://portal.azure.cn/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshibayan%2FAppServiceProxy.SiteExtension%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a> | <a href="https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshibayan%2FAppServiceProxy.SiteExtension%2Fmaster%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a> |
+
+## Manual Installation
 
 Since this application is based on .NET 6.0 and Site Extension, it requires a App Service (Windows) with .NET 6.0 enabled.
 
@@ -36,13 +47,12 @@ You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` f
 
 ```json
 {
-  "apiVersion": "2020-06-01",
+  "apiVersion": "2020-12-01",
   "name": "AppServiceProxy.SiteExtension",
   "type": "siteextensions",
   "dependsOn": [
     "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
-  ],
-  "properties": {}
+  ]
 }
 ```
 
