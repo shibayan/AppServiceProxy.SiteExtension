@@ -1,10 +1,10 @@
 ﻿using System;
 
-using ReverseProxy.Configuration;
+using AppServiceProxy.Configuration;
 
 using Xunit;
 
-namespace ReverseProxy.Tests
+namespace AppServiceProxy.Tests
 {
     public class ProxiesJsonTransformTests
     {

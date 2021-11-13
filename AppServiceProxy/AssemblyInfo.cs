@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("ReverseProxy.Tests")]
+[assembly: InternalsVisibleTo("AppServiceProxy.Tests")]

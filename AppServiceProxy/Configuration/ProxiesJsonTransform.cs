@@ -2,9 +2,9 @@
 
 using Yarp.ReverseProxy.Configuration;
 
-using static ReverseProxy.Configuration.ProxiesJson;
+using static AppServiceProxy.Configuration.ProxiesJson;
 
-namespace ReverseProxy.Configuration
+namespace AppServiceProxy.Configuration
 {
     internal static class ProxiesJsonTransform
     {

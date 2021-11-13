@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 
-using static ReverseProxy.Configuration.ProxiesJson;
+using static AppServiceProxy.Configuration.ProxiesJson;
 
-namespace ReverseProxy.Configuration
+namespace AppServiceProxy.Configuration
 {
     internal class ProxiesJsonReader
     {

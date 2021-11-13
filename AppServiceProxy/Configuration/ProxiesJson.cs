@@ -1,4 +1,4 @@
-﻿namespace ReverseProxy.Configuration
+﻿namespace AppServiceProxy.Configuration
 {
     internal class ProxiesJson
     {
