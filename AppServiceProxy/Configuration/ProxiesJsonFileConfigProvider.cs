@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
 
-namespace ReverseProxy.Configuration
+namespace AppServiceProxy.Configuration
 {
     internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
     {

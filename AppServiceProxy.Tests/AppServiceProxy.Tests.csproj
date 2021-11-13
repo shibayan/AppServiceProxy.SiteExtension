@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReverseProxy\ReverseProxy.csproj" />
+    <ProjectReference Include="..\AppServiceProxy\AppServiceProxy.csproj" />
   </ItemGroup>
 
 </Project>
