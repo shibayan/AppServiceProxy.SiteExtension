@@ -29,7 +29,7 @@ jobs:
       run: dotnet publish AppServiceProxy/AppServiceProxy.csproj -c Release -o ./publish -p:Version=${{ steps.setup_version.outputs.VERSION }}
 
     - name: Build NuGet package
-      run: nuget pack .\AppServiceProxy.nuspec -BasePath .\publish -OutputDirectory .\dist -Version ${{ steps.setup_version.outputs.VERSION }}
+      run: nuget pack AppServiceProxy.nuspec -BasePath ./publish -OutputDirectory ./dist -Version ${{ steps.setup_version.outputs.VERSION }}
 
     - name: Push NuGet Package
       run: dotnet nuget push dist/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
