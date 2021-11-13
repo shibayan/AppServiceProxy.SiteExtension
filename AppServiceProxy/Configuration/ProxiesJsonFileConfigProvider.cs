@@ -36,13 +36,22 @@ namespace AppServiceProxy.Configuration
         {
             public ProxiesJsonFileConfig(string proxiesJsonFile, IChangeToken changeToken)
             {
-                var json = File.ReadAllText(proxiesJsonFile);
+                try
+                {
+                    var json = File.ReadAllText(proxiesJsonFile);
 
-                var proxies = ProxiesJsonReader.ParseJson(json);
-                var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+                    var proxies = ProxiesJsonReader.ParseJson(json);
+                    var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-                Routes = routes;
-                Clusters = clusters;
+                    Routes = routes;
+                    Clusters = clusters;
+                }
+                catch
+                {
+                    Routes = Array.Empty<RouteConfig>();
+                    Clusters = Array.Empty<ClusterConfig>();
+                }
+
                 ChangeToken = changeToken;
             }
 
