@@ -4,6 +4,7 @@
 [![Downloads](https://badgen.net/nuget/dt/AppServiceProxy.SiteExtension)](https://www.nuget.org/packages/AppServiceProxy.SiteExtension/)
 [![NuGet](https://badgen.net/nuget/v/AppServiceProxy.SiteExtension)](https://www.nuget.org/packages/AppServiceProxy.SiteExtension/)
 [![License](https://badgen.net/github/license/shibayan/AppServiceProxy.SiteExtension)](https://github.com/shibayan/AppServiceProxy.SiteExtension/blob/master/LICENSE)
+[![Terraform Registry](https://badgen.net/badge/terraform/registry/5c4ee5)](https://registry.terraform.io/modules/shibayan/appservice-proxy/azurerm/latest)
 
 Site Extension-based Reverse Proxy compatible with Azure Functions Proxies
 
@@ -47,7 +48,7 @@ You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` f
 
 ```json
 {
-  "apiVersion": "2020-12-01",
+  "apiVersion": "2021-02-01",
   "name": "AppServiceProxy.SiteExtension",
   "type": "siteextensions",
   "dependsOn": [
@@ -55,6 +56,18 @@ You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` f
   ]
 }
 ```
+
+### Bicep
+
+```bicep
+resource symbolicname 'Microsoft.Web/sites/siteextensions@2021-02-01' = {
+  name: '${webApp.name}/AppServiceProxy.SiteExtension'
+}
+```
+
+### Terraform
+
+See also [App Service Proxy Terraform module](https://github.com/shibayan/terraform-azurerm-appservice-proxy) repository.
 
 ## Usage
 
