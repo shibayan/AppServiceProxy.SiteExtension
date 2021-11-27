@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using System.Text.Json;
+
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
@@ -38,6 +40,11 @@ namespace AppServiceProxy.Configuration
                 try
                 {
                     var json = File.ReadAllText(yarpJsonFile);
+
+                    var yarp = JsonSerializer.Deserialize<YarpJson>(json);
+
+                    Routes = yarp?.Routes ?? Array.Empty<RouteConfig>();
+                    Clusters = yarp?.Clusters ?? Array.Empty<ClusterConfig>(); ;
                 }
                 catch
                 {
