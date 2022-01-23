@@ -11,6 +11,8 @@ namespace AppServiceProxy.Configuration
         {
             _configFileLoaders = configFileLoaders;
 
+            var json = System.Text.Json.JsonSerializer.Deserialize<YarpJson>(File.ReadAllText(@"C:\Users\shibayan\Documents\yarp.json"));
+
             _fileProvider = new PhysicalFileProvider(_wwwroot)
             {
                 UseActivePolling = true,
@@ -29,26 +31,30 @@ namespace AppServiceProxy.Configuration
 
             if (configFileLoader is null)
             {
+                var changeToken = _fileProvider.Watch("*.*");
+
                 return new FileBaseProxyConfig
                 {
                     Routes = Array.Empty<RouteConfig>(),
                     Clusters = Array.Empty<ClusterConfig>(),
-                    ChangeToken = NullChangeToken.Singleton
+                    ChangeToken = changeToken
                 };
             }
-
-            var contents = File.ReadAllText(Path.Combine(_wwwroot, configFileLoader.ConfigFileName));
-
-            var (routes, clusters) = configFileLoader.LoadConfig(contents);
-
-            var changeToken = _fileProvider.Watch(configFileLoader.ConfigFileName);
-
-            return new FileBaseProxyConfig
+            else
             {
-                Routes = routes,
-                Clusters = clusters,
-                ChangeToken = changeToken
-            };
+                var contents = File.ReadAllText(Path.Combine(_wwwroot, configFileLoader.ConfigFileName));
+
+                var (routes, clusters) = configFileLoader.LoadConfig(contents);
+
+                var changeToken = _fileProvider.Watch(configFileLoader.ConfigFileName);
+
+                return new FileBaseProxyConfig
+                {
+                    Routes = routes,
+                    Clusters = clusters,
+                    ChangeToken = changeToken
+                };
+            }
         }
 
         private class FileBaseProxyConfig : IProxyConfig

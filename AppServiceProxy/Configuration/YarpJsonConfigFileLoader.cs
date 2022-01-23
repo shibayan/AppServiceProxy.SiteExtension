@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-using Yarp.ReverseProxy.Configuration;
+﻿using Yarp.ReverseProxy.Configuration;
 
 namespace AppServiceProxy.Configuration
 {
@@ -12,9 +10,9 @@ namespace AppServiceProxy.Configuration
         {
             try
             {
-                var yarp = JsonSerializer.Deserialize<YarpJson>(contents);
+                var yarp = YarpJsonReader.ParseJson(contents);
 
-                return (yarp?.Routes ?? Array.Empty<RouteConfig>(), yarp?.Clusters ?? Array.Empty<ClusterConfig>());
+                return (yarp.Routes, yarp.Clusters);
             }
             catch
             {
