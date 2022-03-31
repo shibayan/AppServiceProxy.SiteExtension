@@ -4,62 +4,61 @@ using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
 
-namespace AppServiceProxy.Configuration
+namespace AppServiceProxy.Configuration;
+
+internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
 {
-    internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
+    public ProxiesJsonFileConfigProvider()
     {
-        public ProxiesJsonFileConfigProvider()
+        _fileProvider = new PhysicalFileProvider(_wwwroot)
         {
-            _fileProvider = new PhysicalFileProvider(_wwwroot)
+            UseActivePolling = true,
+            UsePollingFileWatcher = true
+        };
+    }
+
+    private readonly PhysicalFileProvider _fileProvider;
+
+    private const string ProxiesJsonFileName = "proxies.json";
+
+    private static readonly string _wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
+
+    public IProxyConfig GetConfig()
+    {
+        var proxiesJsonFile = Path.Combine(_wwwroot, ProxiesJsonFileName);
+
+        var changeToken = _fileProvider.Watch(ProxiesJsonFileName);
+
+        return new ProxiesJsonFileConfig(proxiesJsonFile, changeToken);
+    }
+
+    private class ProxiesJsonFileConfig : IProxyConfig
+    {
+        public ProxiesJsonFileConfig(string proxiesJsonFile, IChangeToken changeToken)
+        {
+            try
             {
-                UseActivePolling = true,
-                UsePollingFileWatcher = true
-            };
-        }
+                var json = File.ReadAllText(proxiesJsonFile);
 
-        private readonly PhysicalFileProvider _fileProvider;
+                var proxies = ProxiesJsonReader.ParseJson(json);
+                var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        private const string ProxiesJsonFileName = "proxies.json";
-
-        private static readonly string _wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
-
-        public IProxyConfig GetConfig()
-        {
-            var proxiesJsonFile = Path.Combine(_wwwroot, ProxiesJsonFileName);
-
-            var changeToken = _fileProvider.Watch(ProxiesJsonFileName);
-
-            return new ProxiesJsonFileConfig(proxiesJsonFile, changeToken);
-        }
-
-        private class ProxiesJsonFileConfig : IProxyConfig
-        {
-            public ProxiesJsonFileConfig(string proxiesJsonFile, IChangeToken changeToken)
+                Routes = routes;
+                Clusters = clusters;
+            }
+            catch
             {
-                try
-                {
-                    var json = File.ReadAllText(proxiesJsonFile);
-
-                    var proxies = ProxiesJsonReader.ParseJson(json);
-                    var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
-
-                    Routes = routes;
-                    Clusters = clusters;
-                }
-                catch
-                {
-                    Routes = Array.Empty<RouteConfig>();
-                    Clusters = Array.Empty<ClusterConfig>();
-                }
-
-                ChangeToken = changeToken;
+                Routes = Array.Empty<RouteConfig>();
+                Clusters = Array.Empty<ClusterConfig>();
             }
 
-            public IReadOnlyList<RouteConfig> Routes { get; }
-
-            public IReadOnlyList<ClusterConfig> Clusters { get; }
-
-            public IChangeToken ChangeToken { get; }
+            ChangeToken = changeToken;
         }
+
+        public IReadOnlyList<RouteConfig> Routes { get; }
+
+        public IReadOnlyList<ClusterConfig> Clusters { get; }
+
+        public IChangeToken ChangeToken { get; }
     }
 }
