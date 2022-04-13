@@ -2,14 +2,14 @@
 
 using Xunit;
 
-namespace AppServiceProxy.Tests
+namespace AppServiceProxy.Tests;
+
+public class ProxiesJsonReaderTests
 {
-    public class ProxiesJsonReaderTests
+    [Fact]
+    public void Basic()
     {
-        [Fact]
-        public void Basic()
-        {
-            var json = @"
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -24,22 +24,22 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            Assert.Equal(1, proxies.Count);
-            Assert.Equal("proxy1", proxies[0].Name);
-            Assert.False(proxies[0].Disabled);
-            Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
-            Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
-            Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
-            Assert.Null(proxies[0].RequestOverrides);
-            Assert.Null(proxies[0].ResponseOverrides);
-        }
+        Assert.Equal(1, proxies.Count);
+        Assert.Equal("proxy1", proxies[0].Name);
+        Assert.False(proxies[0].Disabled);
+        Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
+        Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
+        Assert.Null(proxies[0].RequestOverrides);
+        Assert.Null(proxies[0].ResponseOverrides);
+    }
 
-        [Fact]
-        public void Disabled()
-        {
-            var json = @"
+    [Fact]
+    public void Disabled()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -55,22 +55,22 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            Assert.Equal(1, proxies.Count);
-            Assert.Equal("Root", proxies[0].Name);
-            Assert.True(proxies[0].Disabled);
-            Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
-            Assert.Equal("/example", proxies[0].MatchCondition.Route);
-            Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
-            Assert.Null(proxies[0].RequestOverrides);
-            Assert.Null(proxies[0].ResponseOverrides);
-        }
+        Assert.Equal(1, proxies.Count);
+        Assert.Equal("Root", proxies[0].Name);
+        Assert.True(proxies[0].Disabled);
+        Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
+        Assert.Equal("/example", proxies[0].MatchCondition.Route);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
+        Assert.Null(proxies[0].RequestOverrides);
+        Assert.Null(proxies[0].ResponseOverrides);
+    }
 
-        [Fact]
-        public void RequestOverrides()
-        {
-            var json = @"
+    [Fact]
+    public void RequestOverrides()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -89,24 +89,24 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            Assert.Equal(1, proxies.Count);
-            Assert.Equal("proxy1", proxies[0].Name);
-            Assert.False(proxies[0].Disabled);
-            Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
-            Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
-            Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
-            Assert.NotNull(proxies[0].RequestOverrides);
-            Assert.Equal("application/xml", proxies[0].RequestOverrides.Headers["Accept"]);
-            Assert.Equal("%ANOTHERAPP_API_KEY%", proxies[0].RequestOverrides.Headers["x-functions-key"]);
-            Assert.Null(proxies[0].ResponseOverrides);
-        }
+        Assert.Equal(1, proxies.Count);
+        Assert.Equal("proxy1", proxies[0].Name);
+        Assert.False(proxies[0].Disabled);
+        Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
+        Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
+        Assert.NotNull(proxies[0].RequestOverrides);
+        Assert.Equal("application/xml", proxies[0].RequestOverrides.Headers["Accept"]);
+        Assert.Equal("%ANOTHERAPP_API_KEY%", proxies[0].RequestOverrides.Headers["x-functions-key"]);
+        Assert.Null(proxies[0].ResponseOverrides);
+    }
 
-        [Fact]
-        public void ResponseOverrides()
-        {
-            var json = @"
+    [Fact]
+    public void ResponseOverrides()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -126,19 +126,18 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            Assert.Equal(1, proxies.Count);
-            Assert.Equal("proxy1", proxies[0].Name);
-            Assert.False(proxies[0].Disabled);
-            Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
-            Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
-            Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
-            Assert.Null(proxies[0].RequestOverrides);
-            Assert.NotNull(proxies[0].ResponseOverrides);
-            Assert.Equal(200, proxies[0].ResponseOverrides.StatusCode);
-            Assert.Equal("OK", proxies[0].ResponseOverrides.StatusReason);
-            Assert.Equal("text/plain", proxies[0].ResponseOverrides.Headers["Content-Type"]);
-        }
+        Assert.Equal(1, proxies.Count);
+        Assert.Equal("proxy1", proxies[0].Name);
+        Assert.False(proxies[0].Disabled);
+        Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
+        Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
+        Assert.Null(proxies[0].RequestOverrides);
+        Assert.NotNull(proxies[0].ResponseOverrides);
+        Assert.Equal(200, proxies[0].ResponseOverrides.StatusCode);
+        Assert.Equal("OK", proxies[0].ResponseOverrides.StatusReason);
+        Assert.Equal("text/plain", proxies[0].ResponseOverrides.Headers["Content-Type"]);
     }
 }
