@@ -1,4 +1,4 @@
-using AppServiceProxy.Configuration;
+﻿using AppServiceProxy.Configuration;
 
 using Yarp.ReverseProxy.Configuration;
 
