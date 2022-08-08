@@ -8,7 +8,7 @@ namespace AppServiceProxy.Configuration;
 
 internal static class ProxiesJsonTransform
 {
-    private static readonly Regex _templateRegex = new(@"\{([^\{\}]+)\}", RegexOptions.Compiled);
+    private static readonly Regex s_templateRegex = new(@"\{([^\{\}]+)\}", RegexOptions.Compiled);
 
     public static (IReadOnlyList<RouteConfig>, IReadOnlyList<ClusterConfig>) Apply(IReadOnlyList<ProxyConfig> proxies)
     {
@@ -89,7 +89,7 @@ internal static class ProxiesJsonTransform
     {
         var catchAllParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        var transformedRoute = _templateRegex.Replace(route, m =>
+        var transformedRoute = s_templateRegex.Replace(route, m =>
         {
             var parameterName = m.Groups[1].Value;
 
@@ -106,7 +106,7 @@ internal static class ProxiesJsonTransform
             return $"{{{parameterName}}}";
         });
 
-        var transformedBackendUri = _templateRegex.Replace(backendUri, m =>
+        var transformedBackendUri = s_templateRegex.Replace(backendUri, m =>
         {
             var parameterName = m.Groups[1].Value;
 

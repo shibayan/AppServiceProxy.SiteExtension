@@ -10,7 +10,7 @@ internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
 {
     public ProxiesJsonFileConfigProvider()
     {
-        _fileProvider = new PhysicalFileProvider(_wwwroot)
+        _fileProvider = new PhysicalFileProvider(s_wwwroot)
         {
             UseActivePolling = true,
             UsePollingFileWatcher = true
@@ -21,11 +21,11 @@ internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
 
     private const string ProxiesJsonFileName = "proxies.json";
 
-    private static readonly string _wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
+    private static readonly string s_wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
 
     public IProxyConfig GetConfig()
     {
-        var proxiesJsonFile = Path.Combine(_wwwroot, ProxiesJsonFileName);
+        var proxiesJsonFile = Path.Combine(s_wwwroot, ProxiesJsonFileName);
 
         var changeToken = _fileProvider.Watch(ProxiesJsonFileName);
 
