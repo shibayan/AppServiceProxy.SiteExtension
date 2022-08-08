@@ -98,8 +98,8 @@ public class ProxiesJsonReaderTests
         Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
         Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
         Assert.NotNull(proxies[0].RequestOverrides);
-        Assert.Equal("application/xml", proxies[0].RequestOverrides.Headers["Accept"]);
-        Assert.Equal("%ANOTHERAPP_API_KEY%", proxies[0].RequestOverrides.Headers["x-functions-key"]);
+        Assert.Equal("application/xml", proxies[0].RequestOverrides!.Headers["Accept"]);
+        Assert.Equal("%ANOTHERAPP_API_KEY%", proxies[0].RequestOverrides!.Headers["x-functions-key"]);
         Assert.Null(proxies[0].ResponseOverrides);
     }
 
@@ -136,8 +136,8 @@ public class ProxiesJsonReaderTests
         Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
         Assert.Null(proxies[0].RequestOverrides);
         Assert.NotNull(proxies[0].ResponseOverrides);
-        Assert.Equal(200, proxies[0].ResponseOverrides.StatusCode);
-        Assert.Equal("OK", proxies[0].ResponseOverrides.StatusReason);
-        Assert.Equal("text/plain", proxies[0].ResponseOverrides.Headers["Content-Type"]);
+        Assert.Equal(200, proxies[0].ResponseOverrides!.StatusCode);
+        Assert.Equal("OK", proxies[0].ResponseOverrides!.StatusReason);
+        Assert.Equal("text/plain", proxies[0].ResponseOverrides!.Headers["Content-Type"]);
     }
 }
