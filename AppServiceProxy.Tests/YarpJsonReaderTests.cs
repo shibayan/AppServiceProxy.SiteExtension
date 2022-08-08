@@ -1,15 +1,15 @@
-﻿using AppServiceProxy.Configuration;
+﻿using AppServiceProxy.Configuration.Yarp;
 
 using Xunit;
 
-namespace AppServiceProxy.Tests
+namespace AppServiceProxy.Tests;
+
+public class YarpJsonReaderTests
 {
-    public class YarpJsonReaderTests
+    [Fact]
+    public void Basic()
     {
-        [Fact]
-        public void Basic()
-        {
-            var json = @"
+        var json = @"
 {
   ""Routes"": {
     ""route1"": {
@@ -31,10 +31,9 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var yarp = YarpJsonReader.ParseJson(json);
+        var yarp = YarpJsonReader.ParseJson(json);
 
-            Assert.Equal(1, yarp.Routes.Count);
-            Assert.Equal(1, yarp.Clusters.Count);
-        }
+        Assert.Equal(1, yarp.Routes.Count);
+        Assert.Equal(1, yarp.Clusters.Count);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AppServiceProxy.Configuration;
+using AppServiceProxy.Configuration.Proxies;
+using AppServiceProxy.Configuration.Yarp;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

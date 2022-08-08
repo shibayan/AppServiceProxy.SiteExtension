@@ -1,4 +1,4 @@
-﻿using AppServiceProxy.Configuration;
+﻿using AppServiceProxy.Configuration.Proxies;
 
 using Xunit;
 

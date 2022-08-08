@@ -1,4 +1,4 @@
-﻿namespace AppServiceProxy.Configuration;
+﻿namespace AppServiceProxy.Configuration.Proxies;
 
 internal class ProxiesJson
 {

@@ -1,8 +1,8 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 
-using static AppServiceProxy.Configuration.ProxiesJson;
+using static AppServiceProxy.Configuration.Proxies.ProxiesJson;
 
-namespace AppServiceProxy.Configuration;
+namespace AppServiceProxy.Configuration.Proxies;
 
 internal class ProxiesJsonReader
 {

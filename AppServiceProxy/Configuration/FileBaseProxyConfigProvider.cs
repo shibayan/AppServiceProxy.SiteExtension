@@ -1,69 +1,77 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using AppServiceProxy.Configuration.Yarp;
+
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
 using Yarp.ReverseProxy.Configuration;
 
-namespace AppServiceProxy.Configuration
+namespace AppServiceProxy.Configuration;
+
+internal class FileBaseProxyConfigProvider : IProxyConfigProvider
 {
-    internal class FileBaseProxyConfigProvider : IProxyConfigProvider
+    public FileBaseProxyConfigProvider(IEnumerable<IConfigFileLoader> configFileLoaders)
     {
-        public FileBaseProxyConfigProvider(IEnumerable<IConfigFileLoader> configFileLoaders)
+        _configFileLoaders = configFileLoaders;
+
+        var json = System.Text.Json.JsonSerializer.Deserialize<YarpJson>(File.ReadAllText(@"C:\Users\shibayan\Documents\yarp.json"));
+
+        _fileProvider = new PhysicalFileProvider(s_wwwroot)
         {
-            _configFileLoaders = configFileLoaders;
+            UseActivePolling = true,
+            UsePollingFileWatcher = true
+        };
+    }
 
-            var json = System.Text.Json.JsonSerializer.Deserialize<YarpJson>(File.ReadAllText(@"C:\Users\shibayan\Documents\yarp.json"));
+    private readonly IEnumerable<IConfigFileLoader> _configFileLoaders;
+    private readonly PhysicalFileProvider _fileProvider;
 
-            _fileProvider = new PhysicalFileProvider(_wwwroot)
+    private static readonly string s_wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
+
+    public IProxyConfig GetConfig()
+    {
+        if (TryGetConfigFileLoader(out var configFileLoader))
+        {
+            var contents = File.ReadAllText(Path.Combine(s_wwwroot, configFileLoader.ConfigFileName));
+
+            var (routes, clusters) = configFileLoader.LoadConfig(contents);
+
+            var changeToken = _fileProvider.Watch(configFileLoader.ConfigFileName);
+
+            return new FileBaseProxyConfig
             {
-                UseActivePolling = true,
-                UsePollingFileWatcher = true
+                Routes = routes,
+                Clusters = clusters,
+                ChangeToken = changeToken
             };
         }
-
-        private readonly IEnumerable<IConfigFileLoader> _configFileLoaders;
-        private readonly PhysicalFileProvider _fileProvider;
-
-        private static readonly string _wwwroot = Environment.ExpandEnvironmentVariables(@"%HOME%\site\wwwroot");
-
-        public IProxyConfig GetConfig()
+        else
         {
-            var configFileLoader = _configFileLoaders.FirstOrDefault(x => File.Exists(Path.Combine(_wwwroot, x.ConfigFileName)));
+            var changeToken = _fileProvider.Watch("*.*");
 
-            if (configFileLoader is null)
+            return new FileBaseProxyConfig
             {
-                var changeToken = _fileProvider.Watch("*.*");
-
-                return new FileBaseProxyConfig
-                {
-                    Routes = Array.Empty<RouteConfig>(),
-                    Clusters = Array.Empty<ClusterConfig>(),
-                    ChangeToken = changeToken
-                };
-            }
-            else
-            {
-                var contents = File.ReadAllText(Path.Combine(_wwwroot, configFileLoader.ConfigFileName));
-
-                var (routes, clusters) = configFileLoader.LoadConfig(contents);
-
-                var changeToken = _fileProvider.Watch(configFileLoader.ConfigFileName);
-
-                return new FileBaseProxyConfig
-                {
-                    Routes = routes,
-                    Clusters = clusters,
-                    ChangeToken = changeToken
-                };
-            }
+                Routes = Array.Empty<RouteConfig>(),
+                Clusters = Array.Empty<ClusterConfig>(),
+                ChangeToken = changeToken
+            };
         }
+    }
 
-        private class FileBaseProxyConfig : IProxyConfig
-        {
-            public IReadOnlyList<RouteConfig> Routes { get; init; } = null!;
+    private bool TryGetConfigFileLoader([NotNullWhen(true)] out IConfigFileLoader? configFileLoader)
+    {
+        configFileLoader = _configFileLoaders.FirstOrDefault(x => File.Exists(Path.Combine(s_wwwroot, x.ConfigFileName)));
 
-            public IReadOnlyList<ClusterConfig> Clusters { get; init; } = null!;
+        return configFileLoader is not null;
+    }
 
-            public IChangeToken ChangeToken { get; init; } = null!;
-        }
+    private class FileBaseProxyConfig : IProxyConfig
+    {
+        public IReadOnlyList<RouteConfig> Routes { get; init; } = null!;
+
+        public IReadOnlyList<ClusterConfig> Clusters { get; init; } = null!;
+
+        public IChangeToken ChangeToken { get; init; } = null!;
     }
 }
