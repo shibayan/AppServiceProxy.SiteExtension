@@ -4,14 +4,14 @@ using AppServiceProxy.Configuration;
 
 using Xunit;
 
-namespace AppServiceProxy.Tests
+namespace AppServiceProxy.Tests;
+
+public class ProxiesJsonTransformTests
 {
-    public class ProxiesJsonTransformTests
+    [Fact]
+    public void Basic()
     {
-        [Fact]
-        public void Basic()
-        {
-            var json = @"
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -26,30 +26,30 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-            Assert.Equal(1, routes.Count);
-            Assert.Equal(1, clusters.Count);
+        Assert.Equal(1, routes.Count);
+        Assert.Equal(1, clusters.Count);
 
-            Assert.Equal($"Route_{proxies[0].Name}", routes[0].RouteId);
-            Assert.Equal($"Cluster_{proxies[0].Name}", routes[0].ClusterId);
-            Assert.Equal($"Cluster_{proxies[0].Name}", clusters[0].ClusterId);
-            Assert.Equal(proxies[0].MatchCondition.Methods, routes[0].Match.Methods);
-            Assert.Equal(proxies[0].MatchCondition.Route, routes[0].Match.Path);
+        Assert.Equal($"Route_{proxies[0].Name}", routes[0].RouteId);
+        Assert.Equal($"Cluster_{proxies[0].Name}", routes[0].ClusterId);
+        Assert.Equal($"Cluster_{proxies[0].Name}", clusters[0].ClusterId);
+        Assert.Equal(proxies[0].MatchCondition.Methods, routes[0].Match.Methods);
+        Assert.Equal(proxies[0].MatchCondition.Route, routes[0].Match.Path);
 
-            Assert.NotNull(routes[0].Transforms);
-            Assert.Equal(1, routes[0].Transforms.Count);
+        Assert.NotNull(routes[0].Transforms);
+        Assert.Equal(1, routes[0].Transforms!.Count);
 
-            Assert.Equal("/backend/{test}", routes[0].Transforms[0]["PathPattern"]);
-            Assert.Equal("https://<AnotherApp>.azurewebsites.net", clusters[0].Destinations[$"Cluster_{proxies[0].Name}/destination"].Address);
-        }
+        Assert.Equal("/backend/{test}", routes[0].Transforms![0]["PathPattern"]);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net", clusters[0].Destinations![$"Cluster_{proxies[0].Name}/destination"].Address);
+    }
 
-        [Fact]
-        public void Disabled()
-        {
-            var json = @"
+    [Fact]
+    public void Disabled()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -65,17 +65,17 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
-            var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+        var proxies = ProxiesJsonReader.ParseJson(json);
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-            Assert.Equal(0, routes.Count);
-            Assert.Equal(0, clusters.Count);
-        }
+        Assert.Equal(0, routes.Count);
+        Assert.Equal(0, clusters.Count);
+    }
 
-        [Fact]
-        public void RequestOverrides()
-        {
-            var json = @"
+    [Fact]
+    public void RequestOverrides()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -93,25 +93,25 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-            Assert.Equal(1, routes.Count);
-            Assert.Equal(1, clusters.Count);
+        Assert.Equal(1, routes.Count);
+        Assert.Equal(1, clusters.Count);
 
-            Assert.NotNull(routes[0].Transforms);
-            Assert.Equal(2, routes[0].Transforms.Count);
+        Assert.NotNull(routes[0].Transforms);
+        Assert.Equal(2, routes[0].Transforms!.Count);
 
-            Assert.Equal("/backend/{test}", routes[0].Transforms[0]["PathPattern"]);
-            Assert.Equal("Accept", routes[0].Transforms[1]["RequestHeader"]);
-            Assert.Equal("application/xml", routes[0].Transforms[1]["Append"]);
-        }
+        Assert.Equal("/backend/{test}", routes[0].Transforms![0]["PathPattern"]);
+        Assert.Equal("Accept", routes[0].Transforms![1]["RequestHeader"]);
+        Assert.Equal("application/xml", routes[0].Transforms![1]["Append"]);
+    }
 
-        [Fact]
-        public void ResponseOverrides()
-        {
-            var json = @"
+    [Fact]
+    public void ResponseOverrides()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -131,25 +131,25 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-            Assert.Equal(1, routes.Count);
-            Assert.Equal(1, clusters.Count);
+        Assert.Equal(1, routes.Count);
+        Assert.Equal(1, clusters.Count);
 
-            Assert.NotNull(routes[0].Transforms);
-            Assert.Equal(2, routes[0].Transforms.Count);
+        Assert.NotNull(routes[0].Transforms);
+        Assert.Equal(2, routes[0].Transforms!.Count);
 
-            Assert.Equal("/backend/{test}", routes[0].Transforms[0]["PathPattern"]);
-            Assert.Equal("Content-Type", routes[0].Transforms[1]["ResponseHeader"]);
-            Assert.Equal("text/plain", routes[0].Transforms[1]["Append"]);
-        }
+        Assert.Equal("/backend/{test}", routes[0].Transforms![0]["PathPattern"]);
+        Assert.Equal("Content-Type", routes[0].Transforms![1]["ResponseHeader"]);
+        Assert.Equal("text/plain", routes[0].Transforms![1]["Append"]);
+    }
 
-        [Fact]
-        public void CatchAll()
-        {
-            var json = @"
+    [Fact]
+    public void CatchAll()
+    {
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -164,28 +164,28 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-            Assert.Equal(1, routes.Count);
-            Assert.Equal(1, clusters.Count);
+        Assert.Equal(1, routes.Count);
+        Assert.Equal(1, clusters.Count);
 
-            Assert.Equal("/{**path}", routes[0].Match.Path);
+        Assert.Equal("/{**path}", routes[0].Match.Path);
 
-            Assert.NotNull(routes[0].Transforms);
-            Assert.Equal(1, routes[0].Transforms.Count);
+        Assert.NotNull(routes[0].Transforms);
+        Assert.Equal(1, routes[0].Transforms!.Count);
 
-            Assert.Equal("/backend/{**path}", routes[0].Transforms[0]["PathPattern"]);
-        }
+        Assert.Equal("/backend/{**path}", routes[0].Transforms![0]["PathPattern"]);
+    }
 
-        [Fact]
-        public void EnvironmentVariable()
-        {
-            Environment.SetEnvironmentVariable("APP_HOST_NAME", "example.com");
-            Environment.SetEnvironmentVariable("ANOTHERAPP_API_KEY", "api-key", EnvironmentVariableTarget.Process);
+    [Fact]
+    public void EnvironmentVariable()
+    {
+        Environment.SetEnvironmentVariable("APP_HOST_NAME", "example.com");
+        Environment.SetEnvironmentVariable("ANOTHERAPP_API_KEY", "api-key", EnvironmentVariableTarget.Process);
 
-            var json = @"
+        const string json = @"
 {
     ""$schema"": ""http://json.schemastore.org/proxies"",
     ""proxies"": {
@@ -203,24 +203,23 @@ namespace AppServiceProxy.Tests
 }
 ";
 
-            var proxies = ProxiesJsonReader.ParseJson(json);
+        var proxies = ProxiesJsonReader.ParseJson(json);
 
-            var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-            Assert.Equal(1, routes.Count);
-            Assert.Equal(1, clusters.Count);
+        Assert.Equal(1, routes.Count);
+        Assert.Equal(1, clusters.Count);
 
-            Assert.NotNull(routes[0].Transforms);
-            Assert.Equal(2, routes[0].Transforms.Count);
+        Assert.NotNull(routes[0].Transforms);
+        Assert.Equal(2, routes[0].Transforms!.Count);
 
-            Assert.Equal("/backend/{test}", routes[0].Transforms[0]["PathPattern"]);
-            Assert.Equal("x-functions-key", routes[0].Transforms[1]["RequestHeader"]);
-            Assert.Equal("api-key", routes[0].Transforms[1]["Append"]);
+        Assert.Equal("/backend/{test}", routes[0].Transforms![0]["PathPattern"]);
+        Assert.Equal("x-functions-key", routes[0].Transforms![1]["RequestHeader"]);
+        Assert.Equal("api-key", routes[0].Transforms![1]["Append"]);
 
-            Assert.NotNull(clusters[0].Destinations);
-            Assert.Equal(1, clusters[0].Destinations.Count);
+        Assert.NotNull(clusters[0].Destinations);
+        Assert.Equal(1, clusters[0].Destinations!.Count);
 
-            Assert.Equal("https://example.com", clusters[0].Destinations[$"Cluster_{proxies[0].Name}/destination"].Address);
-        }
+        Assert.Equal("https://example.com", clusters[0].Destinations![$"Cluster_{proxies[0].Name}/destination"].Address);
     }
 }
