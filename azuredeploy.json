@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "17876804091247720694"
+      "templateHash": "11615789758747036490"
     }
   },
   "parameters": {
@@ -44,7 +44,7 @@
   "resources": [
     {
       "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2022-03-01",
       "name": "[variables('appServicePlanName')]",
       "location": "[parameters('location')]",
       "sku": {
@@ -53,7 +53,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2022-03-01",
       "name": "[variables('webAppName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -61,7 +61,7 @@
         "httpsOnly": true,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
         "siteConfig": {
-          "netFrameworkVersion": "v6.0",
+          "netFrameworkVersion": "v7.0",
           "ftpsState": "Disabled",
           "minTlsVersion": "1.2",
           "scmMinTlsVersion": "1.2"
@@ -73,7 +73,7 @@
     },
     {
       "type": "Microsoft.Web/sites/siteextensions",
-      "apiVersion": "2021-03-01",
+      "apiVersion": "2022-03-01",
       "name": "[format('{0}/{1}', variables('webAppName'), 'AppServiceProxy.SiteExtension')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
