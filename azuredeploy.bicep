@@ -18,7 +18,7 @@ param sku string
 var webAppName = 'app-${appNamePrefix}-${substring(uniqueString(resourceGroup().id, deployment().name), 0, 4)}'
 var appServicePlanName = 'plan-${appNamePrefix}-${substring(uniqueString(resourceGroup().id, deployment().name), 0, 4)}'
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
   sku: {
@@ -26,7 +26,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   }
 }
 
-resource webApp 'Microsoft.Web/sites@2021-03-01' = {
+resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppName
   location: location
   properties: {
@@ -34,7 +34,7 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
     httpsOnly: true
     serverFarmId: appServicePlan.id
     siteConfig: {
-      netFrameworkVersion: 'v6.0'
+      netFrameworkVersion: 'v7.0'
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
@@ -42,7 +42,7 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
-resource webAppName_AppServiceProxy_SiteExtension 'Microsoft.Web/sites/siteextensions@2021-03-01' = {
+resource webAppName_AppServiceProxy_SiteExtension 'Microsoft.Web/sites/siteextensions@2022-03-01' = {
   parent: webApp
   name: 'AppServiceProxy.SiteExtension'
 }
