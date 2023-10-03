@@ -27,14 +27,18 @@ internal class ProxiesJson
     internal class RequestOverridesConfig
     {
         public string? Method { get; init; }
+
         public IReadOnlyDictionary<string, string> QueryString { get; init; } = null!;
+
         public IReadOnlyDictionary<string, string> Headers { get; init; } = null!;
     }
 
     internal class ResponseOverridesConfig
     {
         public int? StatusCode { get; init; }
+
         public string? StatusReason { get; init; }
+
         public IReadOnlyDictionary<string, string> Headers { get; init; } = null!;
     }
 }

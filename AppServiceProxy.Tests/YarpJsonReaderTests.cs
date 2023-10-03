@@ -33,7 +33,7 @@ public class YarpJsonReaderTests
 
         var yarp = YarpJsonReader.ParseJson(json);
 
-        Assert.Equal(1, yarp.Routes.Count);
-        Assert.Equal(1, yarp.Clusters.Count);
+        Assert.Single(yarp.Routes);
+        Assert.Single(yarp.Clusters);
     }
 }

@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.14.46.61228",
-      "templateHash": "15152378327738671338"
+      "version": "0.21.1.54444",
+      "templateHash": "1094015672776323092"
     }
   },
   "parameters": {
@@ -29,7 +29,7 @@
         "F1",
         "B1",
         "S1",
-        "P1v2",
+        "P0v3",
         "P1v3"
       ],
       "metadata": {
@@ -44,7 +44,7 @@
   "resources": [
     {
       "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2022-03-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('appServicePlanName')]",
       "location": "[parameters('location')]",
       "sku": {
@@ -53,7 +53,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2022-03-01",
+      "apiVersion": "2022-09-01",
       "name": "[variables('webAppName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -73,7 +73,7 @@
     },
     {
       "type": "Microsoft.Web/sites/siteextensions",
-      "apiVersion": "2022-03-01",
+      "apiVersion": "2022-09-01",
       "name": "[format('{0}/{1}', variables('webAppName'), 'AppServiceProxy.SiteExtension')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
