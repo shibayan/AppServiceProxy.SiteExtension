@@ -10,6 +10,11 @@ builder.Services.AddSingleton<IProxyConfigProvider, ProxiesJsonFileConfigProvide
 
 var app = builder.Build();
 
-app.MapReverseProxy();
+app.MapReverseProxy(proxyPipeline =>
+{
+    proxyPipeline.UseSessionAffinity();
+    proxyPipeline.UseLoadBalancing();
+    proxyPipeline.UsePassiveHealthChecks();
+});
 
 app.Run();

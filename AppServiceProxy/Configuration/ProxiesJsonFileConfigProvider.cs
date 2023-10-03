@@ -8,16 +8,11 @@ namespace AppServiceProxy.Configuration;
 
 internal class ProxiesJsonFileConfigProvider : IProxyConfigProvider
 {
-    public ProxiesJsonFileConfigProvider()
+    private readonly PhysicalFileProvider _fileProvider = new(s_wwwroot)
     {
-        _fileProvider = new PhysicalFileProvider(s_wwwroot)
-        {
-            UseActivePolling = true,
-            UsePollingFileWatcher = true
-        };
-    }
-
-    private readonly PhysicalFileProvider _fileProvider;
+        UseActivePolling = true,
+        UsePollingFileWatcher = true
+    };
 
     private const string ProxiesJsonFileName = "proxies.json";
 
