@@ -1,66 +1,82 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.14.46.61228",
+      "templateHash": "15152378327738671338"
+    }
+  },
   "parameters": {
     "appNamePrefix": {
       "type": "string",
+      "maxLength": 14,
       "metadata": {
-        "description": "The name of the web app that you wish to create."
+        "description": "The name of the function app that you wish to create."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location of the function app that you wish to create."
       }
     },
     "sku": {
       "type": "string",
-      "metadata": {
-        "description": "The SKU of App Service Plan."
-      },
       "allowedValues": [
         "F1",
         "B1",
         "S1",
         "P1v2",
         "P1v3"
-      ]
+      ],
+      "metadata": {
+        "description": "The SKU of App Service Plan."
+      }
     }
   },
   "variables": {
-    "webAppName": "[concat('app-', parameters('appNamePrefix'), '-', substring(uniquestring(resourceGroup().id, deployment().name), 0, 4))]",
-    "appServicePlanName": "[concat('plan-', parameters('appNamePrefix'), '-', substring(uniquestring(resourceGroup().id, deployment().name), 0, 4))]"
+    "webAppName": "[format('app-{0}-{1}', parameters('appNamePrefix'), substring(uniqueString(resourceGroup().id, deployment().name), 0, 4))]",
+    "appServicePlanName": "[format('plan-{0}-{1}', parameters('appNamePrefix'), substring(uniqueString(resourceGroup().id, deployment().name), 0, 4))]"
   },
   "resources": [
     {
       "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2022-03-01",
       "name": "[variables('appServicePlanName')]",
-      "apiVersion": "2020-12-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "sku": {
         "name": "[parameters('sku')]"
       }
     },
     {
       "type": "Microsoft.Web/sites",
+      "apiVersion": "2022-03-01",
       "name": "[variables('webAppName')]",
-      "apiVersion": "2020-12-01",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
-      ],
+      "location": "[parameters('location')]",
       "properties": {
         "clientAffinityEnabled": false,
         "httpsOnly": true,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
         "siteConfig": {
-          "netFrameworkVersion": "v6.0"
+          "netFrameworkVersion": "v7.0",
+          "ftpsState": "Disabled",
+          "minTlsVersion": "1.2",
+          "scmMinTlsVersion": "1.2"
         }
       },
-      "resources": [
-        {
-          "apiVersion": "2020-12-01",
-          "name": "AppServiceProxy.SiteExtension",
-          "type": "siteextensions",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
-          ]
-        }
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/siteextensions",
+      "apiVersion": "2022-03-01",
+      "name": "[format('{0}/{1}', variables('webAppName'), 'AppServiceProxy.SiteExtension')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
       ]
     }
   ]
