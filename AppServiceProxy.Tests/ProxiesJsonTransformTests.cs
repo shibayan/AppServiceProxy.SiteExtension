@@ -30,8 +30,8 @@ public class ProxiesJsonTransformTests
 
         var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        Assert.Equal(1, routes.Count);
-        Assert.Equal(1, clusters.Count);
+        Assert.Single(routes);
+        Assert.Single(clusters);
 
         Assert.Equal($"Route_{proxies[0].Name}", routes[0].RouteId);
         Assert.Equal($"Cluster_{proxies[0].Name}", routes[0].ClusterId);
@@ -40,7 +40,7 @@ public class ProxiesJsonTransformTests
         Assert.Equal(proxies[0].MatchCondition.Route, routes[0].Match.Path);
 
         Assert.NotNull(routes[0].Transforms);
-        Assert.Equal(1, routes[0].Transforms!.Count);
+        Assert.Single(routes[0].Transforms!);
 
         Assert.Equal("/backend/{test}", routes[0].Transforms![0]["PathPattern"]);
         Assert.Equal("https://<AnotherApp>.azurewebsites.net", clusters[0].Destinations![$"Cluster_{proxies[0].Name}/destination"].Address);
@@ -68,8 +68,8 @@ public class ProxiesJsonTransformTests
         var proxies = ProxiesJsonReader.ParseJson(json);
         var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        Assert.Equal(0, routes.Count);
-        Assert.Equal(0, clusters.Count);
+        Assert.Empty(routes);
+        Assert.Empty(clusters);
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public class ProxiesJsonTransformTests
 
         var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        Assert.Equal(1, routes.Count);
-        Assert.Equal(1, clusters.Count);
+        Assert.Single(routes);
+        Assert.Single(clusters);
 
         Assert.NotNull(routes[0].Transforms);
         Assert.Equal(2, routes[0].Transforms!.Count);
@@ -135,8 +135,8 @@ public class ProxiesJsonTransformTests
 
         var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        Assert.Equal(1, routes.Count);
-        Assert.Equal(1, clusters.Count);
+        Assert.Single(routes);
+        Assert.Single(clusters);
 
         Assert.NotNull(routes[0].Transforms);
         Assert.Equal(2, routes[0].Transforms!.Count);
@@ -168,13 +168,13 @@ public class ProxiesJsonTransformTests
 
         var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        Assert.Equal(1, routes.Count);
-        Assert.Equal(1, clusters.Count);
+        Assert.Single(routes);
+        Assert.Single(clusters);
 
         Assert.Equal("/{**path}", routes[0].Match.Path);
 
         Assert.NotNull(routes[0].Transforms);
-        Assert.Equal(1, routes[0].Transforms!.Count);
+        Assert.Single(routes[0].Transforms!);
 
         Assert.Equal("/backend/{**path}", routes[0].Transforms![0]["PathPattern"]);
     }
@@ -207,8 +207,8 @@ public class ProxiesJsonTransformTests
 
         var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
 
-        Assert.Equal(1, routes.Count);
-        Assert.Equal(1, clusters.Count);
+        Assert.Single(routes);
+        Assert.Single(clusters);
 
         Assert.NotNull(routes[0].Transforms);
         Assert.Equal(2, routes[0].Transforms!.Count);
@@ -218,7 +218,7 @@ public class ProxiesJsonTransformTests
         Assert.Equal("api-key", routes[0].Transforms![1]["Append"]);
 
         Assert.NotNull(clusters[0].Destinations);
-        Assert.Equal(1, clusters[0].Destinations!.Count);
+        Assert.Single(clusters[0].Destinations!);
 
         Assert.Equal("https://example.com", clusters[0].Destinations![$"Cluster_{proxies[0].Name}/destination"].Address);
     }

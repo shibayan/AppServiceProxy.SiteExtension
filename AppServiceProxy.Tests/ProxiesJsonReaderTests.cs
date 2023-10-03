@@ -26,7 +26,7 @@ public class ProxiesJsonReaderTests
 
         var proxies = ProxiesJsonReader.ParseJson(json);
 
-        Assert.Equal(1, proxies.Count);
+        Assert.Single(proxies);
         Assert.Equal("proxy1", proxies[0].Name);
         Assert.False(proxies[0].Disabled);
         Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
@@ -57,7 +57,7 @@ public class ProxiesJsonReaderTests
 
         var proxies = ProxiesJsonReader.ParseJson(json);
 
-        Assert.Equal(1, proxies.Count);
+        Assert.Single(proxies);
         Assert.Equal("Root", proxies[0].Name);
         Assert.True(proxies[0].Disabled);
         Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
@@ -91,7 +91,7 @@ public class ProxiesJsonReaderTests
 
         var proxies = ProxiesJsonReader.ParseJson(json);
 
-        Assert.Equal(1, proxies.Count);
+        Assert.Single(proxies);
         Assert.Equal("proxy1", proxies[0].Name);
         Assert.False(proxies[0].Disabled);
         Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
@@ -128,7 +128,7 @@ public class ProxiesJsonReaderTests
 
         var proxies = ProxiesJsonReader.ParseJson(json);
 
-        Assert.Equal(1, proxies.Count);
+        Assert.Single(proxies);
         Assert.Equal("proxy1", proxies[0].Name);
         Assert.False(proxies[0].Disabled);
         Assert.Equal(new[] { "GET" }, proxies[0].MatchCondition.Methods);
