@@ -21,7 +21,8 @@ This project provides an alternative implementation of a VNET-integrated gateway
   - Custom Domain
   - SSL / TLS (Managed Certificate / Key Vault Certificate)
   - VNET Integration
-- .NET 6.0 and YARP-based high-performance reverse proxy
+  - Service Endpoint / Private Endpoint
+- .NET 7 and YARP-based high-performance reverse proxy
 - Compatibility with Azure Functions Proxies (`proxies.json`)
 - Easy to setup with Azure Portal or ARM Template
 - Support for Git integration and CI pipelines
@@ -34,7 +35,7 @@ This project provides an alternative implementation of a VNET-integrated gateway
 
 ## Manual Installation
 
-Since this application is based on .NET 6.0 and Site Extension, it requires a App Service (Windows) with .NET 6.0 enabled.
+Since this application is based on .NET 7 and Site Extension, it requires a App Service (Windows) with .NET 7 enabled.
 
 You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` for installation.
 
@@ -48,7 +49,7 @@ You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` f
 
 ```json
 {
-  "apiVersion": "2021-02-01",
+  "apiVersion": "2022-09-01",
   "name": "AppServiceProxy.SiteExtension",
   "type": "siteextensions",
   "dependsOn": [
@@ -60,7 +61,7 @@ You need to specify the `App Service Proxy` or `AppServiceProxy.SiteExtension` f
 ### Bicep
 
 ```bicep
-resource symbolicname 'Microsoft.Web/sites/siteextensions@2021-02-01' = {
+resource symbolicname 'Microsoft.Web/sites/siteextensions@2022-09-01' = {
   name: '${webApp.name}/AppServiceProxy.SiteExtension'
 }
 ```
