@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 
-using static AppServiceProxy.Configuration.ProxiesJson;
+using static AppServiceProxy.Configuration.Proxies.ProxiesJson;
 
-namespace AppServiceProxy.Configuration;
+namespace AppServiceProxy.Configuration.Proxies;
 
 internal class ProxiesJsonReader
 {
@@ -57,8 +57,8 @@ internal class ProxiesJsonReader
         var requestOverridesConfig = new RequestOverridesConfig
         {
             Method = requestOverrides.TryGetProperty("method", out var method) ? method.GetString() : null,
-            QueryString = requestOverrides.EnumerateObject().Where(x => x.Name.StartsWith("backend.request.querystring.")).ToDictionary(x => x.Name.Substring(28), x => x.Value.GetString()!),
-            Headers = requestOverrides.EnumerateObject().Where(x => x.Name.StartsWith("backend.request.headers.")).ToDictionary(x => x.Name.Substring(24), x => x.Value.GetString()!)
+            QueryString = requestOverrides.EnumerateObject().Where(x => x.Name.StartsWith("backend.request.querystring.")).ToDictionary(x => x.Name[28..], x => x.Value.GetString()!),
+            Headers = requestOverrides.EnumerateObject().Where(x => x.Name.StartsWith("backend.request.headers.")).ToDictionary(x => x.Name[24..], x => x.Value.GetString()!)
         };
 
         return requestOverridesConfig;
@@ -75,7 +75,7 @@ internal class ProxiesJsonReader
         {
             StatusCode = responseOverrides.TryGetProperty("response.statusCode", out var statusCode) ? statusCode.GetInt32() : null,
             StatusReason = responseOverrides.TryGetProperty("response.statusReason", out var statusReason) ? statusReason.GetString() : null,
-            Headers = responseOverrides.EnumerateObject().Where(x => x.Name.StartsWith("response.headers.")).ToDictionary(x => x.Name.Substring(17), x => x.Value.GetString()!)
+            Headers = responseOverrides.EnumerateObject().Where(x => x.Name.StartsWith("response.headers.")).ToDictionary(x => x.Name[17..], x => x.Value.GetString()!)
         };
 
         return responseOverridesConfig;

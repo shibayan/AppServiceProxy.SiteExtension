@@ -2,13 +2,13 @@
 
 using Yarp.ReverseProxy.Configuration;
 
-using static AppServiceProxy.Configuration.ProxiesJson;
+using static AppServiceProxy.Configuration.Proxies.ProxiesJson;
 
-namespace AppServiceProxy.Configuration;
+namespace AppServiceProxy.Configuration.Proxies;
 
-internal static class ProxiesJsonTransform
+internal static partial class ProxiesJsonTransform
 {
-    private static readonly Regex s_templateRegex = new(@"\{([^\{\}]+)\}", RegexOptions.Compiled);
+    private static readonly Regex s_templateRegex = TemplateRegex();
 
     public static (IReadOnlyList<RouteConfig>, IReadOnlyList<ClusterConfig>) Apply(IReadOnlyList<ProxyConfig> proxies)
     {
@@ -126,4 +126,7 @@ internal static class ProxiesJsonTransform
 
         return (destinationAddress, absolutePath);
     }
+
+    [GeneratedRegex(@"\{([^\{\}]+)\}", RegexOptions.Compiled)]
+    private static partial Regex TemplateRegex();
 }

@@ -72,6 +72,36 @@ See also [App Service Proxy Terraform module](https://github.com/shibayan/terraf
 
 ## Usage
 
+### YARP
+
+Create `yarp.json` info `wwwroot` directory.
+
+```json
+{
+  "Routes": {
+    "route1" : {
+      "ClusterId": "cluster1",
+      "Match": {
+        "Path": "{**catch-all}"
+      }
+    }
+  },
+  "Clusters": {
+    "cluster1": {
+      "Destinations": {
+        "cluster1/destination1": {
+          "Address": "https://shibayan.jp/"
+        }
+      }
+    }
+  }
+}
+```
+
+- https://microsoft.github.io/reverse-proxy/articles/config-files.html
+
+### Azure Functions Proxies
+
 Create `proxies.json` into `wwwroot` directory.
 
 ```json
@@ -88,8 +118,6 @@ Create `proxies.json` into `wwwroot` directory.
   }
 }
 ```
-
-## Appendix: `proxies.json` Reference
 
 - [Advanced configuration - Work with proxies in Azure Functions | Microsoft Docs](https://docs.microsoft.com/en-us/azure/azure-functions/functions-proxies#advanced-configuration)
 
