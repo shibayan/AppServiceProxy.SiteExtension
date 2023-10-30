@@ -19,7 +19,7 @@ internal class ProxiesJson
 
     internal class MatchConditionConfig
     {
-        public IReadOnlyList<string> Methods { get; init; } = null!;
+        public IReadOnlyList<string>? Methods { get; init; } = null!;
 
         public string Route { get; init; } = null!;
     }

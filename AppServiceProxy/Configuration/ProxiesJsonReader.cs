@@ -30,7 +30,7 @@ internal class ProxiesJsonReader
 
         var matchConditionConfig = new MatchConditionConfig
         {
-            Methods = matchCondition.GetProperty("methods").EnumerateArray().Select(x => x.GetString()!).ToArray(),
+            Methods = matchCondition.TryGetProperty("methods", out var methods) ? methods.EnumerateArray().Select(x => x.GetString()!).ToArray() : null,
             Route = matchCondition.GetProperty("route").GetString()!
         };
 
