@@ -222,4 +222,41 @@ public class ProxiesJsonTransformTests
 
         Assert.Equal("https://example.com", clusters[0].Destinations![$"Cluster_{proxies[0].Name}/destination"].Address);
     }
+
+    [Fact]
+    public void Optional_Methods()
+    {
+        const string json = @"
+{
+    ""$schema"": ""http://json.schemastore.org/proxies"",
+    ""proxies"": {
+        ""proxy1"": {
+            ""matchCondition"": {
+                ""route"": ""/api/{test}""
+            },
+            ""backendUri"": ""https://<AnotherApp>.azurewebsites.net/backend/{test}""
+        }
+    }
+}
+";
+
+        var proxies = ProxiesJsonReader.ParseJson(json);
+
+        var (routes, clusters) = ProxiesJsonTransform.Apply(proxies);
+
+        Assert.Single(routes);
+        Assert.Single(clusters);
+
+        Assert.Equal($"Route_{proxies[0].Name}", routes[0].RouteId);
+        Assert.Equal($"Cluster_{proxies[0].Name}", routes[0].ClusterId);
+        Assert.Equal($"Cluster_{proxies[0].Name}", clusters[0].ClusterId);
+        Assert.Equal(proxies[0].MatchCondition.Methods, routes[0].Match.Methods);
+        Assert.Equal(proxies[0].MatchCondition.Route, routes[0].Match.Path);
+
+        Assert.NotNull(routes[0].Transforms);
+        Assert.Single(routes[0].Transforms!);
+
+        Assert.Equal("/backend/{test}", routes[0].Transforms![0]["PathPattern"]);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net", clusters[0].Destinations![$"Cluster_{proxies[0].Name}/destination"].Address);
+    }
 }

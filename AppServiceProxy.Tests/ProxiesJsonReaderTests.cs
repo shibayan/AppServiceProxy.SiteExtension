@@ -140,4 +140,33 @@ public class ProxiesJsonReaderTests
         Assert.Equal("OK", proxies[0].ResponseOverrides!.StatusReason);
         Assert.Equal("text/plain", proxies[0].ResponseOverrides!.Headers["Content-Type"]);
     }
+
+    [Fact]
+    public void Optional_Methods()
+    {
+        const string json = @"
+{
+    ""$schema"": ""http://json.schemastore.org/proxies"",
+    ""proxies"": {
+        ""proxy1"": {
+            ""matchCondition"": {
+                ""route"": ""/api/{test}""
+            },
+            ""backendUri"": ""https://<AnotherApp>.azurewebsites.net/api/<FunctionName>""
+        }
+    }
+}
+";
+
+        var proxies = ProxiesJsonReader.ParseJson(json);
+
+        Assert.Single(proxies);
+        Assert.Equal("proxy1", proxies[0].Name);
+        Assert.False(proxies[0].Disabled);
+        Assert.Null(proxies[0].MatchCondition.Methods);
+        Assert.Equal("/api/{test}", proxies[0].MatchCondition.Route);
+        Assert.Equal("https://<AnotherApp>.azurewebsites.net/api/<FunctionName>", proxies[0].BackendUri);
+        Assert.Null(proxies[0].RequestOverrides);
+        Assert.Null(proxies[0].ResponseOverrides);
+    }
 }
