@@ -34,7 +34,7 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
     httpsOnly: true
     serverFarmId: appServicePlan.id
     siteConfig: {
-      netFrameworkVersion: 'v7.0'
+      netFrameworkVersion: 'v8.0'
       ftpsState: 'Disabled'
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
