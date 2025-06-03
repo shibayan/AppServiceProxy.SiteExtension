@@ -23,6 +23,7 @@ jobs:
 
     - name: Use Bicep ${{ env.BICEP_VERSION }}
       run: |
+        az config set bicep.use_binary_from_path=False
         az bicep install --version v${{ env.BICEP_VERSION }}
         az bicep version
 
