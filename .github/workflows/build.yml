@@ -8,7 +8,7 @@ on:
 
 env:
   DOTNET_VERSION: 8.0.x
-  BICEP_VERSION: 0.23.1
+  BICEP_VERSION: 0.36.1
 
 jobs:
   build:
