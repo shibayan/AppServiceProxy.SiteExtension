@@ -18,7 +18,7 @@ param sku string
 var webAppName = 'app-${appNamePrefix}-${substring(uniqueString(resourceGroup().id, deployment().name), 0, 4)}'
 var appServicePlanName = 'plan-${appNamePrefix}-${substring(uniqueString(resourceGroup().id, deployment().name), 0, 4)}'
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
   name: appServicePlanName
   location: location
   sku: {
@@ -26,7 +26,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   }
 }
 
-resource webApp 'Microsoft.Web/sites@2022-09-01' = {
+resource webApp 'Microsoft.Web/sites@2024-11-01' = {
   name: webAppName
   location: location
   properties: {
@@ -42,7 +42,7 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
-resource webAppName_AppServiceProxy_SiteExtension 'Microsoft.Web/sites/siteextensions@2022-09-01' = {
+resource webAppName_AppServiceProxy_SiteExtension 'Microsoft.Web/sites/siteextensions@2024-11-01' = {
   parent: webApp
   name: 'AppServiceProxy.SiteExtension'
 }

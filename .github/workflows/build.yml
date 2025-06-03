@@ -8,7 +8,7 @@ on:
 
 env:
   DOTNET_VERSION: 8.0.x
-  BICEP_VERSION: 0.23.1
+  BICEP_VERSION: 0.36.1
 
 jobs:
   build:
@@ -22,7 +22,10 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Use Bicep ${{ env.BICEP_VERSION }}
-      run: az bicep install --version v${{ env.BICEP_VERSION }}
+      run: |
+        az config set bicep.use_binary_from_path=False
+        az bicep install --version v${{ env.BICEP_VERSION }}
+        az bicep version
 
     - name: Build project
       run: dotnet build -c Release
