@@ -22,7 +22,9 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Use Bicep ${{ env.BICEP_VERSION }}
-      run: az bicep install --version v${{ env.BICEP_VERSION }}
+      run: |
+        az bicep install --version v${{ env.BICEP_VERSION }}
+        az bicep version
 
     - name: Build project
       run: dotnet build -c Release
