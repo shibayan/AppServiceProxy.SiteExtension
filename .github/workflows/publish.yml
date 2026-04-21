@@ -19,7 +19,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Use NuGet CLI
-      uses: nuget/setup-nuget@v3
+      uses: nuget/setup-nuget@v4
 
     - name: Setup Version
       id: setup_version
